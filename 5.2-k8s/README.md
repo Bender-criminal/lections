@@ -24,11 +24,8 @@ Docker использует некоторые возможности ядра L
 в изоляции, предоставление приложению только тех ресурсов, которые вы хотите предоставить. Это гарантирует,
 что контейнеры будут хорошими соседями. Контрольные группы позволяют разделять доступные ресурсы железа и если необходимо,
 устанавливать пределы и ограничения. Например, ограничить возможное количество памяти контейнеру. 
-* **AuFS (Union File System)** – образ использует AuFS (advanced multi-layered unification filesystem - вспомогательная
-файловая система, образующая каскадно-объединённое монтирование для файловых систем Linux) для прозрачного монтирования
-файловых систем. С помощью bootfs загружается контейнер в память. Затем bootfs отмонтируется, освобождая память.
-Далее работает rootfs (от Debian, Ubuntu и т.д.). В Docker rootfs монтируется в режиме «только для чтения».
-Когда контейнер запущен из образа, монтируется файловая система на запись поверх необходимого слоя ниже. 
+* **OverlayFS (более новая и простая реализация AUFS (Advanced multi-layered Unification File System)** – драйвер файловой
+для прозрачного монтирования образов.
 
 ![Docker image](images/Docker%20image.png)
 
@@ -39,7 +36,12 @@ Docker использует некоторые возможности ядра L
 * инициализирует сеть/мост: создает сетевой интерфейс, который позволяет docker-у общаться хост машиной; 
 * установка IP адреса: находит и задает адрес; 
 * запускает указанный процесс: запускает ваше приложение; 
-* обрабатывает и выдает вывод вашего приложения: подключается и логирует стандартный вход, вывод и поток ошибок вашего приложения, что бы вы могли отслеживать, как работает ваше приложение. 
+* обрабатывает и выдает вывод вашего приложения: подключается и логирует стандартный вход, вывод и поток ошибок вашего приложения,
+что бы вы могли отслеживать, как работает ваше приложение. 
+
+С помощью `BootFS` загружается контейнер в память. Затем `BootFS` отмонтируется, освобождая память.
+Далее работает `RootFS` (от Debian, Ubuntu и т.д.). В Docker `RootFS` монтируется в режиме "только для чтения".
+Когда контейнер запущен из образа, монтируется файловая система на запись поверх необходимого слоя ниже. 
 
 ### Структура образа 
 Образ состоит из слоев, каждый из которых представляет собой неизменяемую файловую систему, а по-простому набор файлов и директорий.
@@ -54,6 +56,16 @@ Docker использует некоторые возможности ядра L
 Слои являются read only и, если в слое MyApplication нужно изменить файл, находящийся в низлежащем слое, то файл сначала
 копируется в нужный слой, а потом в нем изменяется, оставаясь в исходном слое в первозданном виде.
 Неизменяемость слоев позволяет использовать их всеми образами на хосте. 
+
+### OverlayFS (overlay2)
+
+В папке `/var/lib/docker/overlay2` слови представлены папками, в папке `l` хранятся коротки ссылки на имена для использования
+в команде `mount`. В каждом образе хранится (кроме базового, там только `link` и `diff`):
+* `link` – файл, который содержит короткое имя директории из папки `l`;
+* `lower` – файл, который ссылается на короткое имя родителя;
+* `diff` – директория, которая содержит данные самого образа;
+* `merged` – актуальный контент этого образа (слитый с родительским diff);
+* `work` – для внутреннего использования в `OverlayFS`.
 
 ## K8S
 Kubernetes — это портативная расширяемая платформа с открытым исходным кодом для управления
@@ -257,7 +269,7 @@ kubectl kubectl logs -f deployment/simple-web-server
 # смотрим внешний ip для нашего сервиса
 kubectl get svc -n nginx-ingress
 # добавляем в /etc/hosts k8s-test.local
-echo -n '192.168.52.11 k8s-test.local' | sudo tee -a /etc/hosts
+echo -n '192.168.52.101 k8s-test.local' | sudo tee -a /etc/hosts
 
 # проверка работы
 curl -X POST k8s-test.local/users -d '{"firstName":"Alex","lastName":"Romanov", "age":30}' -H 'Content-Type: application/json' | jq
@@ -268,7 +280,7 @@ curl -X GET k8s-test.local/users | jq
 ```shell script
 kubectl scale --replicas=3 deployment/simple-web-server
 kubectl get deployment --watch
-kubectl set image deployment/simple-web-server simple-web-server=romanowalex/simple-web-server:v1.2
+kubectl set image deployment/simple-web-server simple-web-server=romanowalex/simple-web-server:v1.1
 kubectl rollout status deployment/simple-web-server
 curl http://k8s-test.local
 ``` 
@@ -282,5 +294,6 @@ curl http://k8s-test.local
 1. [Основы Kubernetes](https://habr.com/ru/post/258443)
 1. [Знакомство с Kubernetes](https://ealebed.github.io/tags/kubernetes/)
 1. [Kubernetes: Flannel networking](https://blog.laputa.io/kubernetes-flannel-networking-6a1cb1f8ec7c)
+1. [Use the OverlayFS storage driver](https://docs.docker.com/storage/storagedriver/overlayfs-driver/)
 1. Иллюстрированное руководство по устройству сети в Kubernetes [Часть 1 и 2](https://habr.com/ru/company/flant/blog/346304/), [Часть 3](https://habr.com/ru/company/flant/blog/433382/)
 1. [Container Networking Interface (CNI) — сетевой интерфейс и стандарт для Linux-контейнеров](https://habr.com/ru/company/flant/blog/329830/)

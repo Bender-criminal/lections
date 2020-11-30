@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: simple-web-server
-          image: romanowalex/simple-web-server:v1.2
+          image: romanowalex/simple-web-server:v1.20
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE

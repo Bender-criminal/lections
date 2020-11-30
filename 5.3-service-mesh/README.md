@@ -66,10 +66,11 @@ kubectl get nodes
 # Установка Istio
 # Открываем в другой вкладке ssh к мастер ноде
 ssh ansible@192.168.52.10
-export ISTIO_VERSION=1.7.4
+# Удалить nginx-ingress
+helm uninstall nginx-ingress --namespace nginx-ingress
 cd /opt
 curl -L https://istio.io/downloadIstio | sudo sh -
-sudo mv /opt/istio-1.7.4 istio
+sudo mv /opt/istio-<version> istio
 sudo chown -R ansible:ansible /opt/istio
 export PATH=$PWD/bin:$PATH
 istioctl install --set profile=demo
