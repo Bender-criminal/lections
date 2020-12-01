@@ -41,7 +41,7 @@
             </activation>
             <properties>
                 <frontend.build.executable>cmd</frontend.build.executable>
-                <frontend.build.argument1>/c npm version</frontend.build.argument1>
+                <frontend.build.argument1>/c npm run</frontend.build.argument1>
             </properties>
         </profile>
         <profile>
@@ -66,13 +66,14 @@
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
 
     <build>
         <finalName>app#${project.artifactId}</finalName>
         <plugins>
-<!--             <plugin>
+             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>${exec-maven-plugin.version}</version>
@@ -92,7 +93,7 @@
                     </arguments>
                     <workingDirectory>${project.basedir}</workingDirectory>
                 </configuration>
-            </plugin> -->
+            </plugin>
         </plugins>
     </build>
 

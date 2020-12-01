@@ -5,19 +5,19 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 
 public class PrintTask extends DefaultTask {
-    private String to;
+    private String module;
     
     @TaskAction
     public void printProjectName() {
-        System.out.println("Project module:" + to);
+        System.out.println("Project module:" + module);
     }
 
     @Input
-    public String getTo() {
-        return to;
+    public String getModule() {
+        return module;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setModule(String module) {
+        this.module = module;
     }
 }

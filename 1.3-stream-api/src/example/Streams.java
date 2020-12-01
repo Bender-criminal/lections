@@ -1,8 +1,15 @@
 package example;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class Streams {
     public static void main(String[] args) throws IOException {
@@ -19,26 +26,27 @@ class Streams {
 
 // Коллекции
 // подойдут все коллекции: List, Set, Queue, кроме Map
-//  Stream<String> names = List.of("Alex", "Mike", "Tony").stream();
+  //Stream<String> names1 = List.of("Alex", "Mike", "Tony").stream();
 
 // Объекты файловой системы
-//        Stream<String> lines = Files.lines(Paths.get("example.txt"));
+//       Stream<String> lines = Files.lines(Paths.get("example.txt"));
 
 //Из значений
-//        Stream<String> streamFromValues = Stream.of("a1", "a2", "a3");
+//       Stream<String> streamFromValues = Stream.of("a1", "a2", "a3");
 
 //Массива
-//        Stream<String> streamFromArrays = Arrays.stream(new String[]{"a1", "a2", "a3"});
+ //       Stream<String> streamFromArrays = Arrays.stream(new String[]{"a1", "a2", "a3"});
 
 //С помощью билдера
-//        Stream.builder().add("a1").add("a2").add("a3").build();
+//     var streamFromBuilder = Stream.builder().add("a1").add("a2").add("a3").build();
 
 //Бесконечные стримы с помощью iterate/generate
 //        Stream<Event> events = Stream.generate(() -> new Event(UUID.randomUUID(), "description"));
 //        events.forEach(System.out::println);
-
-//        Stream<Integer> intStream = Stream.iterate(1, val -> val + 1);
+//
+//        Stream<Integer> intStream0 = Stream.iterate(1, val -> val + 1);
 //        Stream<Integer> intStream = Stream.iterate(1, val -> val <=10, val -> val + 1);
+//
 //       intStream.forEach(System.out::println);
 
 //Параллельные стримы на примере коллекции
@@ -50,7 +58,7 @@ class Streams {
 //        var setOfNames = names.stream().collect(Collectors.toSet());
 //        setOfNames.forEach(System.out::println);
 
-// to Map
+ //to Map
 //        var mapOfNames = names.stream().collect(Collectors.toMap(
 //                key -> key,
 //                value -> "This is name"));
@@ -77,6 +85,7 @@ class Streams {
 
 // Statistic
 //        IntStream.of(1, 2, 3, 4).summaryStatistics();
+
 
 // Основные промежуточные операции
 
@@ -109,9 +118,9 @@ class Streams {
 //
 //        System.out.println(petNames); // output [Buddy, Lucy, Frankie, Rosie, Simba, Tilly]
 
-//    names.parallelStream()
-//        .peek(it -> System.out.printf("Thread [%s] peek: %s%n", Thread.currentThread().getName(), it))
-//        .forEach(String::toLowerCase);
+    names.parallelStream()
+        .peek(it -> System.out.printf("Thread [%s] peek: %s%n", Thread.currentThread().getName(), it))
+        .forEach(String::toLowerCase);
 
 
     }
